@@ -8,97 +8,81 @@ const gameboard = (() => {
             gameSquare.setAttribute("array-index",i)
             document.querySelector("#container").appendChild(gameSquare);
         }
-    })();
+    })
     const threeInRow = (a, b, c) => {
         return a === b && b === c && a !== undefined;
     }
     const checkWinner = () => {
-        if (threeInRow(board[0], board[1], board[2])) {
-            winner = board[0];
+        if (threeInRow(gameboard.board[0], gameboard.board[1], gameboard.board[2])) {
+            winner = gameboard.board[0];
             displayWinner();
-            console.log('checkWinner 1');
             return true;
         }
-        if (threeInRow(board[3], board[4], board[5])) {
-            winner = board[3];
+        if (threeInRow(gameboard.board[3], gameboard.board[4], gameboard.board[5])) {
+            winner = gameboard.board[3];
             displayWinner();
-            console.log('checkWinner 2');
             return true;
         }
-        if (threeInRow(board[6], board[7], board[8])) {
-            winner = board[6];
+        if (threeInRow(gameboard.board[6], gameboard.board[7], gameboard.board[8])) {
+            winner = gameboard.board[6];
             displayWinner();
-            console.log('checkWinner 3');
             return true;
         }
-        if (threeInRow(board[0], board[3], board[6])) {
-            winner = board[0];
+        if (threeInRow(gameboard.board[0], gameboard.board[3], gameboard.board[6])) {
+            winner = gameboard.board[0];
             displayWinner();
-            console.log('checkWinner 4');
             return true;
         }
-        if (threeInRow(board[1], board[4], board[7])) {
-            winner = board[1];
+        if (threeInRow(gameboard.board[1], gameboard.board[4], gameboard.board[7])) {
+            winner = gameboard.board[1];
             displayWinner();
-            console.log('checkWinner 5');
             return true;
         }
-        if (threeInRow(board[2], board[5], board[8])) {
-            winner = board[2];
+        if (threeInRow(gameboard.board[2], gameboard.board[5], gameboard.board[8])) {
+            winner = gameboard.board[2];
             displayWinner();
-            console.log('checkWinner 6');
             return true;
         }
-        if (threeInRow(board[0], board[4], board[8])) {
-            winner = board[0];
+        if (threeInRow(gameboard.board[0], gameboard.board[4], gameboard.board[8])) {
+            winner = gameboard.board[0];
             displayWinner();
-            console.log('checkWinner 7');
             return true;
         }
-        if (threeInRow(board[2], board[4], board[6])) {
-            winner = board[2];
+        if (threeInRow(gameboard.board[2], gameboard.board[4], gameboard.board[6])) {
+            winner = gameboard.board[2];
             displayWinner();
-            console.log('checkWinner 8');
             return true;
         }
-        if (board.length === 9 && !board.includes(undefined)) {
+        if (gameboard.board.length === 9 && !gameboard.board.includes(undefined)) {
             displayTie();
-            console.log('checkWinner 9');
             return true;
         }
         else {
-            console.log('checkWinner 10');
             return false;
         }
     }
     const displayWinner = () => {
-        removePlayerHighlight();
+        if (document.querySelector('.winner-message') !== null) return;
+        document.querySelectorAll('.winner-message')
         let winningPlayer = document.querySelector('[player-name="' + winner + '"]');
         winningPlayer.classList.add('player-winner');
+        let winnerMessage = document.createElement('div');
+        winnerMessage.classList.add('winner-message');
+        winnerMessage.innerHTML = winner + " wins!";
+        document.querySelector("#container").append(winnerMessage);
     }
     const displayTie = () => {
-        removePlayerHighlight();
+        if (document.querySelector('.winner-message') !== null) return;
+        let winnerMessage = document.createElement('div');
+        winnerMessage.classList.add('winner-message');
+        winnerMessage.innerHTML = 'Player 1 and Player 2 tie.';
+        document.querySelector("#container").append(winnerMessage);
     }
-    const removePlayerHighlight = () => {
-        let allPlayers = document.querySelectorAll('.player-display');
-        allPlayers.forEach(div => div.classList.remove('player-active'));
-        allPlayers.forEach(div => div.classList.remove('player-winner'));
-    }
-    const clearBoard = () => {
-        gameboard.board = [];
-        document.querySelectorAll('.square').forEach(div => div.innerHTML = '');
-        winner = null;
-        removePlayerHighlight();
-    }
-    const restartButton = (() => {
-        let restartButton = document.createElement('button');
-        restartButton.innerText = 'Reset Game';
-        document.querySelector("#container").appendChild(restartButton);
-        restartButton.addEventListener("click", clearBoard);
-    })();
     return {
         board,
+        create,
         checkWinner,
+        displayWinner
         }
 })();
 
@@ -115,20 +99,24 @@ const player = (name, symbol) => {
         name,
         symbol,
         createPlayerDisplay
-    };
-};
+    }
+}
 
 const gameflow = (() => {
-    const player1 = player("Player 1", "X");
-    const player2 = player("Player 2", "O");
-    const createPlayerDisplays = (() => {
+    let player1 = player("Player 1", "X");
+    let player2 = player("Player 2", "O");
+    const createPlayerDisplays = () => {
         player1.createPlayerDisplay(player1.name, player1.symbol);
         player2.createPlayerDisplay(player2.name, player2.symbol);
-    })();
-    const player1Display = document.querySelector('[player-name="' + player1.name + '"]');
-    const player2Display = document.querySelector('[player-name="' + player2.name + '"]');
+    }
     let activePlayer = player1;
+    const activePlayerHighlight = (activePlayer) => {
+        let activePlayerDiv = document.querySelector('[player-name="' + activePlayer.name + '"]');
+        activePlayerDiv.classList.add('player-active');
+    }
     const switchPlayer = () => {
+        const player1Display = document.querySelector('[player-name="' + player1.name + '"]');
+        const player2Display = document.querySelector('[player-name="' + player2.name + '"]');
         if (activePlayer === player1) {
             activePlayer = player2;
             player1Display.classList.remove('player-active');
@@ -139,7 +127,7 @@ const gameflow = (() => {
             player2Display.classList.remove('player-active');
             player1Display.classList.add('player-active');
         }
-    };
+    }
     const markSpot = (e) => {
         e.target.innerHTML = activePlayer.symbol;
     }
@@ -148,6 +136,9 @@ const gameflow = (() => {
         gameboard.board[index] = activePlayer.name;
     }
     return {
+        createPlayerDisplays,
+        activePlayerHighlight,
+        activePlayer,
         switchPlayer,
         markSpot,
         updateArray
@@ -155,13 +146,15 @@ const gameflow = (() => {
 })();
 
 function initialize() {
-    function clickSquare(e) {
+    gameboard.create();
+    gameflow.createPlayerDisplays();
+    gameflow.activePlayerHighlight(gameflow.activePlayer);
+
+    clickSquare = (e) => {
         if (gameboard.board[e.target.getAttribute("array-index")] !== undefined) {
-            console.log("gameboard already full here");
             return;
         }
         let gameOver = gameboard.checkWinner();
-        console.log("gameOver is " + gameOver);
         if (!gameOver) {
             gameflow.markSpot(e);
             gameflow.updateArray(e);
@@ -169,7 +162,21 @@ function initialize() {
             gameboard.checkWinner();
         }
     }
+    
+    clearBoard = () => {
+        gameboard.board = [];
+        document.querySelectorAll('.square').forEach(div => div.innerHTML = '');
+        document.querySelector('.winner-message').remove();
+        let allPlayers = document.querySelectorAll('.player-display');
+        allPlayers.forEach(div => div.classList.remove('player-winner'));
+    }
+    
     document.querySelectorAll('.square').forEach(div => div.addEventListener("click", clickSquare));
+
+    let restartButton = document.createElement('button');
+    restartButton.innerText = 'Reset Game';
+    document.querySelector("#container").appendChild(restartButton);
+    restartButton.addEventListener("click", clearBoard);
 }
 
 initialize();

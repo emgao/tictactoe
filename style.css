@@ -26,6 +26,7 @@ h1 {
     display:flex;
     justify-content:center;
     align-items:center;
+    cursor:pointer;
 }
 .player-active {
     background-color:yellow;
@@ -44,6 +45,10 @@ h1 {
     align-items:center;
 }
 button {
+    grid-column-start:2;
+    margin-top:25px;
+}
+.winner-message {
     grid-column-start:2;
     margin-top:25px;
 }

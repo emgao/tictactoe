@@ -81,9 +81,8 @@ const gameboard = (() => {
     return {
         board,
         create,
-        checkWinner,
-        displayWinner
-        }
+        checkWinner
+    }
 })();
 
 const player = (name, symbol) => {
@@ -170,7 +169,7 @@ function initialize() {
         let allPlayers = document.querySelectorAll('.player-display');
         allPlayers.forEach(div => div.classList.remove('player-winner'));
     }
-    
+
     document.querySelectorAll('.square').forEach(div => div.addEventListener("click", clickSquare));
 
     let restartButton = document.createElement('button');

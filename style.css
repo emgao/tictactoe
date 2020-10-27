@@ -51,4 +51,5 @@ button {
 .winner-message {
     grid-column-start:2;
     margin-top:25px;
+    text-align:center;
 }
